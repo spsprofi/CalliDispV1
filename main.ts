@@ -1,33 +1,17 @@
 function OLEDDisplay () {
-    let OledDauer = 0
     if (OledDauer >= OLEDBearbeiten) {
         ZeitOLEDWechsel = ZeitAktuell
         if (SchrittNummerOLED == 1) {
-            oledssd1306.setTextXY(0, 10)
-            oledssd1306.writeNumber(Geschwindigkeit)
+            oledssd1306.setTextXY(2, 10)
+            oledssd1306.writeNumber(SchrittnummerGlobal)
             SchrittNummerOLED = 2
         } else if (SchrittNummerOLED == 2) {
-            oledssd1306.setTextXY(1, 10)
-            oledssd1306.writeNumber(calliBot2.entfernung(C2Einheit.cm))
+            oledssd1306.setTextXY(4, 10)
+            oledssd1306.writeNumber(Geschwindigkeit)
             SchrittNummerOLED = 3
         } else if (SchrittNummerOLED == 3) {
-            oledssd1306.setTextXY(2, 10)
-            oledssd1306.writeNumber(input.lightLevel())
-            SchrittNummerOLED = 4
-        } else if (SchrittNummerOLED == 4) {
-            oledssd1306.setTextXY(3, 10)
-            oledssd1306.writeNumber(input.temperature())
-            SchrittNummerOLED = 5
-        } else if (SchrittNummerOLED == 5) {
-            oledssd1306.setTextXY(4, 10)
-            oledssd1306.writeNumber(input.soundLevel())
-            SchrittNummerOLED = 6
-        } else if (SchrittNummerOLED == 6) {
-            oledssd1306.setTextXY(5, 10)
-            SchrittNummerOLED = 7
-        } else if (SchrittNummerOLED == 7) {
             oledssd1306.setTextXY(6, 10)
-            oledssd1306.writeNumber(input.acceleration(Dimension.Strength))
+            oledssd1306.writeNumber(Entfernung)
             SchrittNummerOLED = 1
         }
     }
@@ -42,6 +26,8 @@ input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
         Programm = 1
     }
     AnzeigeProgramm()
+    oledssd1306.setTextXY(0, 10)
+    oledssd1306.writeNumber(Programm)
 })
 // Stossstange
 function Programm1 () {
@@ -709,10 +695,6 @@ input.onPinTouchEvent(TouchPin.P3, input.buttonEventDown(), function () {
     }
 })
 let SchrittnummerGlobalAlt = 0
-let Entf1 = 0
-let Entf2 = 0
-let Entf3 = 0
-let Entfernung = 0
 let GeschwindigkeitUS = 0
 let BelDauer = 0
 let BelBlau = 0
@@ -724,11 +706,13 @@ let StartZeitPause = 0
 let ZeitPause = 0
 let SchrittNeu = 0
 let GeschwindigkeitAlt = 0
-let SchrittnummerGlobal = 0
 let Programm = 0
 let Start = 0
+let Entfernung = 0
 let Geschwindigkeit = 0
+let SchrittnummerGlobal = 0
 let ZeitAktuell = 0
+let OledDauer = 0
 let ZeitOLEDWechsel = 0
 let SchrittNummerOLED = 0
 let SchrittNummerLED = 0
@@ -741,36 +725,30 @@ OLEDBearbeiten = 500
 SchrittNummerLED = 1
 SchrittNummerOLED = 1
 ZeitOLEDWechsel = control.millis()
-basic.setLedColor(0xff0000)
+basic.setLedColor(0x0000ff)
 oledssd1306.initDisplay()
 oledssd1306.clearDisplay()
-basic.setLedColor(0x00ff00)
+basic.setLedColor(0xff0000)
 oledssd1306.setTextXY(0, 0)
-oledssd1306.writeString("Geschw.:")
-oledssd1306.setTextXY(1, 0)
-oledssd1306.writeString("Entf.:")
+oledssd1306.writeString("Programm:")
 oledssd1306.setTextXY(2, 0)
-oledssd1306.writeString("Licht:")
-oledssd1306.setTextXY(3, 0)
-oledssd1306.writeString("Temp.:")
+oledssd1306.writeString("Schritt :")
 oledssd1306.setTextXY(4, 0)
-oledssd1306.writeString("Lautst.:")
-oledssd1306.setTextXY(5, 0)
-oledssd1306.writeString("Kompass:")
+oledssd1306.writeString("Geschw. :")
 oledssd1306.setTextXY(6, 0)
-oledssd1306.writeString("Beschl.:")
+oledssd1306.writeString("Entf.   :")
 basic.forever(function () {
     ZeitAktuell = control.millis()
     BelDauer = ZeitAktuell - ZeitBelWechsel
     IstZeitPause = ZeitAktuell - StartZeitPause
-    Entf3 = Entf2
-    Entf2 = Entf1
-    Entf1 = calliBot2.entfernung(C2Einheit.cm)
-    Entfernung = (Entf1 + Entf2 + Entf3) / 3
+    OledDauer = ZeitAktuell - ZeitOLEDWechsel
+    Entfernung = calliBot2.entfernung(C2Einheit.cm)
     if (SchrittnummerGlobal == 0) {
         calliBot2.motorStop(C2Motor.beide, C2Stop.Bremsen)
         Geschwindigkeit = 40
         Programm = 1
+        oledssd1306.setTextXY(0, 10)
+        oledssd1306.writeNumber(Programm)
         basic.setLedColor(0xff0000)
         basic.showString("ON")
         SchrittnummerGlobal = 1
